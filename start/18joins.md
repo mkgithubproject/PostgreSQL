@@ -205,6 +205,108 @@ NATURAL JOIN departments;
 
 ---
 
-If you want, I can **draw a visual diagram showing all joins with input and output tables**, so it’s super easy to remember and visualize.
+Good one 🚀 — this is about **how to decide whether to use `LEFT JOIN` or `RIGHT JOIN`**.
 
-Do you want me to do that?
+Let’s break it into intuition + examples.
+
+---
+
+## 🔹 The Core Idea
+
+* **LEFT JOIN** → Keep **all rows from the left table** (first table in `FROM`), even if there’s no match in the right table.
+* **RIGHT JOIN** → Keep **all rows from the right table** (second table in `JOIN`), even if there’s no match in the left table.
+
+👉 They are **mirror images**.
+👉 You usually choose based on **which table you want to keep fully**.
+
+---
+
+## 🔹 How to Think
+
+Ask yourself:
+
+1. **Which table is the “main” one?** (the one you don’t want to lose rows from) → put it on the **LEFT** in a `LEFT JOIN`.
+2. Do I need **all records from both tables**? → then use `FULL OUTER JOIN` (if supported).
+3. Do I only care about **common rows**? → use `INNER JOIN`.
+
+---
+
+## 🔹 Example
+
+### Tables
+
+**Employees**
+
+| emp\_id | name    |
+| ------- | ------- |
+| 1       | Alice   |
+| 2       | Bob     |
+| 3       | Charlie |
+
+**Salaries**
+
+| emp\_id | salary |
+| ------- | ------ |
+| 1       | 5000   |
+| 2       | 6000   |
+
+---
+
+### 1) LEFT JOIN (Employees LEFT JOIN Salaries)
+
+```sql
+SELECT e.name, s.salary
+FROM Employees e
+LEFT JOIN Salaries s
+ON e.emp_id = s.emp_id;
+```
+
+Output:
+
+```
++---------+--------+
+| name    | salary |
++---------+--------+
+| Alice   | 5000   |
+| Bob     | 6000   |
+| Charlie | NULL   |  <-- Charlie kept (no salary found)
+```
+
+👉 All employees stay (main table = Employees).
+
+---
+
+### 2) RIGHT JOIN (Employees RIGHT JOIN Salaries)
+
+```sql
+SELECT e.name, s.salary
+FROM Employees e
+RIGHT JOIN Salaries s
+ON e.emp_id = s.emp_id;
+```
+
+Output:
+
+```
++-------+--------+
+| name  | salary |
++-------+--------+
+| Alice | 5000   |
+| Bob   | 6000   |
+```
+
+👉 All salaries stay (main table = Salaries).
+
+---
+
+## 🔹 Shortcut to Remember
+
+* **LEFT JOIN** → “I care about everything on the left.”
+* **RIGHT JOIN** → “I care about everything on the right.”
+
+In real-world SQL, people mostly use **LEFT JOIN** instead of RIGHT, because you can always swap table order.
+
+---
+
+⚡ Do you want me to also show you how to **convert any RIGHT JOIN into a LEFT JOIN** (by swapping tables)? That’s a trick most SQL devs use.
+
